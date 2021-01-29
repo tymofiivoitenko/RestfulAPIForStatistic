@@ -17,4 +17,10 @@ public class RestResponseEntityExceptionHandler {
     protected ResponseEntity handleFieldsAreInvalid() {
         return new ResponseEntity("", HttpStatus.UNPROCESSABLE_ENTITY);
     }
+    
+    // Handle situation for null argument
+    @ExceptionHandler(JsonMappingException.class)
+    protected ResponseEntity handleNullArgument() {
+        return new ResponseEntity("", HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }
