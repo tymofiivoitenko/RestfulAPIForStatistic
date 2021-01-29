@@ -39,7 +39,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         Instant instantMinuteAgo = Instant.now().minus(1, ChronoUnit.MINUTES);
         // We work only with new transactions, which are no older than 60 sec
-        transactionList.stream()
+        transactionList = transactionList.stream()
                 .filter(transaction -> instantMinuteAgo.compareTo(transaction.getTimestamp()) < 0)
                 .collect(Collectors.toList());
 
