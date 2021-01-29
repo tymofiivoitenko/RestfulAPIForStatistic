@@ -136,6 +136,7 @@ public class ControllerTest {
         Transaction transaction = new Transaction(new BigDecimal(1), Instant.now());
         Transaction transaction1 = new Transaction(new BigDecimal(2), Instant.now());
 
+        // Send post requests
         mockMvc.perform(post("/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(transaction)))
