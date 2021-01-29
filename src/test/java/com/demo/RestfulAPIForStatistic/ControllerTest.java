@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -59,6 +60,46 @@ public class ControllerTest {
     }
 
     @Test
+    public void areTransactionWithNullArgumentsFailedCreation() throws Exception {
+
+        // Check for amount null
+        String postRequest = "{\"amount\":\"\",\"timestamp\":\"2018-07-17T09:59:51.312Z\"}";
+
+        mockMvc.perform(post("/transactions")
+                .content(postRequest)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
+
+        // Check for timestamp null
+        postRequest = "{\"amount\":\"3\",\"timestamp\":\"\"}";
+
+        mockMvc.perform(post("/transactions")
+                .content(postRequest)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void areTransactionWithInvalidArgumentsFailedCreation() throws Exception {
+
+        // Check for invalid amount
+        String postRequest = "{\"amount\": \"#\",\"timestamp\":\"2021-01-29T20:10:51.312Z\"}";
+
+        mockMvc.perform(post("/transactions")
+                .content(postRequest)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
+
+        // Check for invalid timestamp
+        postRequest = "{\"amount\":\"3\",\"timestamp\":\"#\"" + "}";
+
+        mockMvc.perform(post("/transactions")
+                .content(postRequest)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     public void isStatisticsEmptyForNoCreatedTransactions() throws Exception {
 
         mockMvc.perform(get("/statistics"))
@@ -67,7 +108,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void isStatisticsCorrectgWithSeveralTransactions() throws Exception {
+    public void isStatisticsCorrectWithSeveralTransactions() throws Exception {
         Transaction transaction = new Transaction(new BigDecimal(40.4735892749287), Instant.now());
         Transaction transaction1 = new Transaction(new BigDecimal(1000), Instant.now());
         Transaction transaction2 = new Transaction(new BigDecimal(0), Instant.now());
