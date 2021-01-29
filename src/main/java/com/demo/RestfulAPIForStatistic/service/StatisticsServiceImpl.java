@@ -30,12 +30,15 @@ public class StatisticsServiceImpl implements StatisticsService {
     // Update statistics every 1 millisecond
     // Updating happens every millisecond because it's minimal timeStep between transaction dates
     // Transaction date format: YYYY-MM-DDThh:mm:ss.sssZ
+    // When Statistic updater works in the background, GET request receive the already created Statistics
+    // So, GET() time complexity is O(1);
     @Scheduled(fixedDelay = 1)
     public void updateStatistics() {
-        Instant instantMinuteAgo = Instant.now().minus(1, ChronoUnit.MINUTES);
         // We copy arrayList in order to don't lock the original one
         List<Transaction> transactionList = new ArrayList<>(transactionDao.getTransactions());
 
+        Instant instantMinuteAgo = Instant.now().minus(1, ChronoUnit.MINUTES);
+        // We work only with new transactions, which are no older than 60 sec
         transactionList.stream()
                 .filter(transaction -> instantMinuteAgo.compareTo(transaction.getTimestamp()) < 0)
                 .collect(Collectors.toList());
@@ -43,7 +46,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         createStatistics(transactionList);
     }
 
-    // Returen Statistics
+    // Return Statistics
     @Override
     public Statistics getStatistics() {
         return statistics;
