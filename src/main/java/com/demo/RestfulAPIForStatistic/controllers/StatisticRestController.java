@@ -24,6 +24,11 @@ public class StatisticRestController {
     // Validate and create transaction
     @RequestMapping(value = "/transactions", method = RequestMethod.POST)
     public ResponseEntity<String> postTransaction(@RequestBody Transaction transaction) {
+        // Check if transaction date null
+        if (transaction.getTimestamp() == null) {
+            return new ResponseEntity<>("", HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        
         // Check if transaction date is in the future
         // Return empty body with status code 422
         if (transactionService.isTransactionDateInFuture(transaction)) {
