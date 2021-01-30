@@ -24,10 +24,10 @@ So any GET request just takes the ready-made statistics.
 
 ## Possible improvements
 1. Pull out transactions that are not older than 60 sec in a separate list (by analogy with indexes in databases). 
-Se we would have 2 lists - original and listForStatistics.
+So we would have 2 lists - original and listForStatistics.
 2. Deleting transactions that are older than 60 sec from this small list, in order to don't filter them every time.
 
-This is not done in order not to complicate the code and understanding of the solution.
+This is not done in order to do not complicate the code and understanding of the solution.
 
 ## QnA
 
