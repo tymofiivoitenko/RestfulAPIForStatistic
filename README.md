@@ -15,7 +15,7 @@ But for all of them, counting statistics for GET requests will take O(N).
 This is due to the fact that:
 
 1. Counting sum, avg... will take O(N)
-2. At the time of creating statistics, we need to be sure that all transactions are not older than 60 seconds. 
+2. At the time of creating statistics, we need to be sure that all transactions are not older than 60 seconds.
 That is why f.e. statistics refreshing cannot be done together with the last POST request. It is not a single trigger, that shows that data is updated. 
 There is the additional trigger - time.
 
@@ -23,14 +23,17 @@ Therefore, as a solution created Statistics Updater, that refresh statistics in 
 So any GET request just takes the ready-made statistics.
 
 ## Possible improvements
-Deleting elements, which are older than 60 sec, from the data structure, so we don't filter them every time.
+1. Pull out transactions that are not older than 60 sec in a separate list (by analogy with indexes in databases). 
+Se we would have 2 lists - original and listForStatistics.
+2. Deleting transactions that are older than 60 sec from this small list, in order to don't filter them every time.
+
 This is not done in order not to complicate the code and understanding of the solution.
 
 ## QnA
 
 ### How frequently statistics updater is triggered
 It is triggered every 1 millisecond. I agree that it looks very strange, but this is the only way to be sure that statistics will be up-to-date at any given time.
-It works with such frequency because it is time step between transaction dates. Transaction date format: YYYY-MM-DDThh:mm:ss.sssZ. 
+It works with such frequency because it is a time step between transaction dates. Transaction date format: YYYY-MM-DDThh:mm:ss.sssZ. 
 
 ### Why is the ArrayList selected as a data structure for keeping transactions?
 1. It is lightweight and the time of insert operation takes O(1) (in the common case)
