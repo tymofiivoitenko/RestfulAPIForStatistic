@@ -29,6 +29,13 @@ So we would have 2 lists - original and listForStatistics.
 
 This is not done in order to do not complicate the code and understanding of the solution.
 
+## Alternative solutions
+Implementation of the Observer design pattern. Thus, upon creation, the transaction object:
+1. triggers statistics updation
+2. calculates the time until current transaction will be useless for statistics: (transaction date + 60 sec) - now().
+3. Falls asleep for this time 
+4. Right after waking up deletes it from data structure and 2nd triggers statistics update
+
 ## QnA
 
 ### How frequently statistics updater is triggered
